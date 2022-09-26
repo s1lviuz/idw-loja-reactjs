@@ -1,6 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Formata o número como moeda em padrão BRL (Real Brasileiro).
@@ -18,23 +18,21 @@ function formatarPreco(valor) {
 function App() {
   const [carrinho, setCarrinho] = useState([]);
   const [totalDoCarrinho, setTotalDoCarrinho] = useState(0.0);
-  const produtos = [
-    {
-      id: 1,
-      nome: "Produto Um",
-      preco: 15,
-    },
-    {
-      id: 2,
-      nome: "Produto Dois",
-      preco: 73,
-    },
-    {
-      id: 3,
-      nome: "Produto Três",
-      preco: 199.99,
-    },
-  ];
+  const [produtos, setProdutos] = useState(null);
+  const [erroCarregarProdutos, setErroCarregarProdutos] = useState(null);
+
+  useEffect(() => {
+    return async () => {
+      try {
+        const request = await fetch("produtos.json");
+        const produtos = await request.json();
+        setProdutos(produtos);
+      } catch (error) {
+        setErroCarregarProdutos(error);
+      }
+    };
+  }, []);
+
   const comprarProduto = (produto) => {
     const contemProduto = carrinho.find((p) => p.produto.id === produto.id);
     if (!contemProduto) {
@@ -90,19 +88,32 @@ function App() {
       <div className="conteudo">
         <div className="lista">
           <h1>Produtos</h1>
-          <ul id="lista-produtos">
-            {produtos.map((produto) => (
-              <li key={produto.id}>
-                <div className="titulo">{produto.nome}</div>
-                <div className="comprar">
-                  <div className="preco">{formatarPreco(produto.preco)}</div>
-                  <button onClick={() => comprarProduto(produto)}>
-                    Comprar
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+          {produtos && (
+            <ul id="lista-produtos">
+              {produtos.map((produto) => (
+                <li key={produto.id}>
+                  <div className="titulo">{produto.nome}</div>
+                  <div className="comprar">
+                    <div className="preco">{formatarPreco(produto.preco)}</div>
+                    <button onClick={() => comprarProduto(produto)}>
+                      Comprar
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+          {!produtos && !erroCarregarProdutos && (
+            <div>Aguarde. Carregando...</div>
+          )}
+          {erroCarregarProdutos && (
+            <div>
+              <div>
+                Não foi possível carregar os dados de produtos.Ocorreu um erro.
+              </div>
+              <div>{erroCarregarProdutos.toString()}</div>
+            </div>
+          )}
         </div>
         <div className="carrinho">
           <h1>Seu carrinho</h1>
