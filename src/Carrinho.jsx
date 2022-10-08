@@ -17,6 +17,7 @@ export default function Carrinho({ produtosComprados }) {
   const [total, setTotal] = useState(0.0);
 
   useEffect(() => {
+    console.log('Carrinho -> useEffect...');
     produtosComprados.forEach((itemComprado) => {
       if (!itemComprado.adicionado) {
         const produto = itemComprado.produto;
@@ -72,6 +73,8 @@ export default function Carrinho({ produtosComprados }) {
       setTotal((t) => t - item.produto.preco);
     }
   };
+
+  console.log('Carrinho -> render...');
 
   return (
     <div className="carrinho">
