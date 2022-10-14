@@ -1,28 +1,35 @@
 import formatarPreco from "./funcoes";
 
-function ItemDoCarrinho({ item }) {
+function ItemDoCarrinho({ produto }) {
   return (
     <li>
-      <div>{item.produto.nome}</div>
-      <div>{item.quantidade} un.</div>
-      <div>{formatarPreco(item.total)}</div>
+      <div>{produto.nome}</div>
+      <div>{formatarPreco(produto.preco)}</div>
       <button>X</button>
     </li>
   );
 }
 
-export default function Carrinho({ itens }) {
+export default function Carrinho({ produtos }) {
+  const calcularTotal = () => {
+    let total = 0.0;
+    if (produtos) {
+      produtos.forEach((produto) => (total += produto.preco));
+    }
+    return total;
+  };
   return (
     <div className="carrinho">
       <h1>Seu carrinho</h1>
       <ul id="lista-carrinho">
-        {itens.map((item) => (
-          <ItemDoCarrinho key={item.produto.id} item={item}></ItemDoCarrinho>
-        ))}
+        {produtos &&
+          produtos.map((produto) => (
+            <ItemDoCarrinho key={produto.id} produto={produto}></ItemDoCarrinho>
+          ))}
       </ul>
       <div id="carrinho-total">
         <div>Total</div>
-        <div>{formatarPreco(0.0)}</div>
+        <div>{formatarPreco(calcularTotal())}</div>
       </div>
     </div>
   );

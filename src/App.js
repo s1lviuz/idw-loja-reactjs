@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 import Cabecalho from "./Cabecalho";
 import Carrinho from "./Carrinho";
@@ -23,6 +24,8 @@ function App() {
     }
   ];
 
+  const [produtosComprados, setProdutosComprados] = useState([produtos[1]]);
+
   return (
     <div className="App">
       <Cabecalho />
@@ -31,7 +34,7 @@ function App() {
           <h1>Produtos</h1>
           <ListaDeProdutos produtos={produtos}></ListaDeProdutos>
         </div>
-        <Carrinho itens={[]}></Carrinho>
+        <Carrinho produtos={produtosComprados}></Carrinho>
       </div>
       <Rodape />
     </div>
