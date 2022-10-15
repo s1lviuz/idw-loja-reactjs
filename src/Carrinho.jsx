@@ -1,31 +1,46 @@
 import formatarPreco from "./funcoes";
+import Alerta from './Alerta';
 
-function ItemDoCarrinho({ produto }) {
+function ItemDoCarrinho({ produto, onRemover }) {
   return (
     <li>
       <div>{produto.nome}</div>
-      <div>{formatarPreco(produto.preco)}</div>
-      <button>X</button>
+      <div>{produto.quantidadeNoCarrinho}</div>
+      <div>{formatarPreco(produto.preco * produto.quantidadeNoCarrinho)}</div>
+      <button onClick={() => onRemover(produto)}>X</button>
     </li>
   );
 }
 
-export default function Carrinho({ produtos }) {
+export default function Carrinho({ produtos, onRemover }) {
   const calcularTotal = () => {
     let total = 0.0;
     if (produtos) {
-      produtos.forEach((produto) => (total += produto.preco));
+      produtos.forEach(
+        (produto) => (total += produto.preco * produto.quantidadeNoCarrinho)
+      );
     }
     return total;
   };
+
   return (
     <div className="carrinho">
       <h1>Seu carrinho</h1>
       <ul id="lista-carrinho">
         {produtos &&
           produtos.map((produto) => (
-            <ItemDoCarrinho key={produto.id} produto={produto}></ItemDoCarrinho>
+            <ItemDoCarrinho
+              key={produto.id}
+              produto={produto}
+              onRemover={onRemover}
+            ></ItemDoCarrinho>
           ))}
+        {(!produtos || (produtos && produtos.length === 0)) && (
+          <Alerta
+            titulo={'Seu carrinho está vazio'}
+            mensagem={'Que tal mudar essa situação? 😉'}
+          ></Alerta>
+        )}
       </ul>
       <div id="carrinho-total">
         <div>Total</div>
