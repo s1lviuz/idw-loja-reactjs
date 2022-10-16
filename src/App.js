@@ -1,33 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Cabecalho from "./Cabecalho";
 import Carrinho from "./Carrinho";
 import ListaDeProdutos from "./ListaDeProdutos";
 import Rodape from "./Rodape";
+import { strapiDataToObject } from "./funcoes";
+import Alerta from "./Alerta";
 
 function App() {
-  const produtos = [
-    {
-      "id": 1,
-      "nome": "Produto Um",
-      "preco": 15,
-      "quantidadeNoCarrinho": 0
-    },
-    {
-      "id": 2,
-      "nome": "Produto Dois",
-      "preco": 73,
-      "quantidadeNoCarrinho": 0
-    },
-    {
-      "id": 3,
-      "nome": "Produto Três",
-      "preco": 199.99,
-      "quantidadeNoCarrinho": 0
-    }
-  ];
-
+  const [produtos, setProdutos] = useState(null);
+  const [erro, setErro] = useState(null);
   const [produtosComprados, setProdutosComprados] = useState([]);
+
+useEffect(() => {
+  const fetchProdutos = async () => {
+    const response = await fetch('http://localhost:1337/api/produtos/?populate=foto');
+    const json = await response.json();
+    if (json.data) {
+      const dados = strapiDataToObject(json.data);
+      setProdutos(dados);
+    }
+    if (json.error) {
+      setErro(`Erro na comunicação com o servidor de dados (${json.error.name} - ${json.error.status} - ${json.error.message})`);
+    }
+  }
+  fetchProdutos().catch((error) => setErro(error));
+}, []);
 
   const onComprar = (produto) => {
     // procura o produto no carrinho
@@ -78,10 +76,23 @@ function App() {
       <div className="conteudo">
         <div className="lista">
           <h1>Produtos</h1>
-          <ListaDeProdutos
-            produtos={produtos}
-            onComprar={onComprar}>
-          </ListaDeProdutos>
+          {produtos && !erro && (
+            <ListaDeProdutos
+              produtos={produtos}
+              onComprar={onComprar}>
+            </ListaDeProdutos>
+          )}
+          {!produtos && !erro && (
+            <Alerta
+              mensagem={'Por favor, aguarde. Carregando...'}>
+            </Alerta>
+          )}
+          {erro && (
+            <Alerta
+              titulo={'Não foi possível obter os dados de produtos.'}
+              mensagem={erro.toString()}>
+            </Alerta>
+          )}
         </div>
         <Carrinho
           produtos={produtosComprados}

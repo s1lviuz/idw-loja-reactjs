@@ -50,6 +50,9 @@
   display: flex;
   justify-content: space-between;
 }
+#lista-produtos li div:not(:last-child) {
+  margin-right: 20px;
+}
 #lista-produtos li .titulo {
   font-weight: bold;
 }
@@ -85,4 +88,12 @@
   padding: 10px;
   display: flex;
   justify-content: space-between;
+}
+#lista-carrinho li div:not(:last-child) {
+  margin-right: 20px;
+}
+#lista-carrinho li div:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

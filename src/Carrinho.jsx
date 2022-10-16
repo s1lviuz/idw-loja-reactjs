@@ -7,7 +7,7 @@ function ItemDoCarrinho({ produto, onRemover }) {
       <div>{produto.nome}</div>
       <div>{produto.quantidadeNoCarrinho}</div>
       <div>{formatarPreco(produto.preco * produto.quantidadeNoCarrinho)}</div>
-      <button onClick={() => onRemover(produto)}>X</button>
+      <div><button onClick={() => onRemover(produto)}>X</button></div>
     </li>
   );
 }
