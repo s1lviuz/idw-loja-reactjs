@@ -1,4 +1,4 @@
-import formatarPreco from "./funcoes";
+import formatarPreco from "../lib/funcoes";
 import Alerta from './Alerta';
 
 function ItemDoCarrinho({ produto, onRemover }) {

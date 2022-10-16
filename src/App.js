@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import Cabecalho from "./Cabecalho";
-import Carrinho from "./Carrinho";
-import ListaDeProdutos from "./ListaDeProdutos";
-import Rodape from "./Rodape";
-import { strapiDataToObject } from "./funcoes";
-import Alerta from "./Alerta";
+import Cabecalho from "./componentes/Cabecalho";
+import Carrinho from "./componentes/Carrinho";
+import ListaDeProdutos from "./componentes/ListaDeProdutos";
+import Rodape from "./componentes/Rodape";
+import { strapiDataToObject } from "./lib/funcoes";
+import Alerta from "./componentes/Alerta";
 
 function App() {
   const [produtos, setProdutos] = useState(null);

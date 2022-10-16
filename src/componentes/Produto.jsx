@@ -1,4 +1,4 @@
-import formatarPreco from "./funcoes";
+import formatarPreco from "../lib/funcoes";
 
 export default function Produto({ produto, onComprar }) {
   return (
