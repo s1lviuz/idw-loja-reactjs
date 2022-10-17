@@ -21,12 +21,15 @@
 }
 .conteudo {
   display: flex;
+  margin-bottom: 30px;
 }
-.lista {
+.conteudo main {
   flex-grow: 1;
 }
 .carrinho {
   width: 300px;
+  flex-shrink: 0;
+  margin-left: 30px;
 }
 #carrinho-total {
   display: flex;
@@ -40,7 +43,6 @@
 #lista-produtos {
   list-style-type: none;
   padding-left: 0px;
-  padding-right: 30px;
 }
 #lista-produtos li {
   margin-bottom: 20px;

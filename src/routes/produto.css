@@ -1,0 +1,24 @@
+.informacoes {
+  display: flex;
+  justify-content: space-between;
+}
+
+.foto {
+  width: 200;
+  flex-shrink: 0;
+  margin-right: 30px;
+}
+
+.descricao {
+  flex-grow: 1;
+  margin-right: 30px;
+}
+
+.compra {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.preco {
+  font-size: xx-large;
+}
