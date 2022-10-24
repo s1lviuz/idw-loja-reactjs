@@ -1,6 +1,9 @@
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
 import formatarPreco from "../lib/funcoes";
-
 /**
  * O componente Produto apresenta as informações do produto
  * na lista de produtos.
@@ -10,31 +13,29 @@ import formatarPreco from "../lib/funcoes";
  */
 function Produto({ produto, onComprar }) {
   return (
-    <li>
-      <div>
-        <img
-          src={`http://localhost:1337${produto.foto?.formats?.thumbnail?.url}`}
-          width={64}
-          alt={produto.nome}
-        ></img>
-      </div>
+    <Card className="h-100 border-0">
       <div
+        className="card-img-top"
         style={{
-          flexGrow: 1,
-          paddingLeft: 20,
-          display: "flex",
-          justifyContent: "space-between",
+          backgroundImage: `url(http://localhost:1337${produto.foto?.formats?.thumbnail?.url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          height: 250,
         }}
-      >
-        <div className="titulo">
-          <Link to={`produtos/${produto.id}`}>{produto.nome}</Link>
-        </div>
-        <div className="comprar">
-          <div className="preco">{formatarPreco(produto.preco)}</div>
-          <button onClick={() => onComprar(produto)}>Comprar</button>
-        </div>
-      </div>
-    </li>
+      ></div>
+      <Card.Body>
+        <Card.Title>
+          {produto.nome}
+        </Card.Title>
+        <Card.Text className="fw-bold fs-3">
+          {formatarPreco(produto.preco)}
+        </Card.Text>
+      </Card.Body>
+      <Card.Footer>
+        <Button as={Link} to={`produtos/${produto.id}`} variant="outline-secondary" className="me-3">Saiba mais</Button>
+        <Button onClick={() => onComprar(produto)}>Comprar</Button>
+      </Card.Footer>
+    </Card>
   );
 }
 
@@ -46,14 +47,16 @@ function Produto({ produto, onComprar }) {
  */
 export default function ListaDeProdutos({ produtos, onComprar }) {
   return (
-    <ul id="lista-produtos">
+    <Row xs={1} md={2} lg={3} xl={4} className="g-4">
       {produtos.map((produto) => (
-        <Produto
-          key={produto.id}
-          produto={produto}
-          onComprar={onComprar}
-        ></Produto>
+        <Col key={produto.id}>
+          <Produto
+            key={produto.id}
+            produto={produto}
+            onComprar={onComprar}
+          ></Produto>
+        </Col>
       ))}
-    </ul>
+    </Row>
   );
 }

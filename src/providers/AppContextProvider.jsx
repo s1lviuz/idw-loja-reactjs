@@ -16,6 +16,17 @@ const AppContextProvider = ({ children }) => {
   // cria o state, inicializando-o com o que foi obtido do localStorage
   const [produtosDoCarrinho, setProdutosDoCarrinho] = useState(carrinho);
 
+  // controla se o carrinho está visível ou não
+  const [showCarrinho, setShowCarrinho] = useState(false);
+
+  const handleFecharCarrinho = () => {
+    setShowCarrinho(false);
+  };
+
+  const handleAbrirCarrinho = () => {
+    setShowCarrinho(true);
+  }
+
   const onComprar = (produto) => {
     // procura o produto no carrinho
     let item = produtosDoCarrinho.find((p) => p.id === produto.id);
@@ -39,6 +50,7 @@ const AppContextProvider = ({ children }) => {
       // atualiza o state
       setProdutosDoCarrinho(lista);
     }
+    setShowCarrinho(true);
   };
 
   const onRemover = (produto) => {
@@ -73,6 +85,10 @@ const AppContextProvider = ({ children }) => {
     setProdutosDoCarrinho,
     onComprar,
     onRemover,
+    showCarrinho,
+    setShowCarrinho,
+    handleFecharCarrinho,
+    handleAbrirCarrinho,
   };
 
   return <LojaContext.Provider value={values}>{children}</LojaContext.Provider>;

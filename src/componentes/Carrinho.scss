@@ -1,0 +1,28 @@
+#carrinho-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: x-large;
+}
+#carrinho-total div:last-of-type {
+  font-weight: bold;
+}
+#lista-carrinho {
+  list-style-type: none;
+  padding-left: 0px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+}
+#lista-carrinho li {
+  margin-bottom: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+#lista-carrinho li div:not(:last-child) {
+  margin-right: 20px;
+}
+#lista-carrinho li div:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

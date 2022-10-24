@@ -2,6 +2,8 @@ import { useContext } from "react";
 import formatarPreco from "../lib/funcoes";
 import { LojaContext } from "../providers/AppContextProvider";
 import Alerta from "./Alerta";
+import { Button } from "react-bootstrap";
+import "./Carrinho.scss";
 
 /**
  * O componente ItemDoCarrinho representa um item
@@ -17,7 +19,9 @@ function ItemDoCarrinho({ produto, onRemover }) {
       <div>{produto.quantidadeNoCarrinho}</div>
       <div>{formatarPreco(produto.preco * produto.quantidadeNoCarrinho)}</div>
       <div>
-        <button onClick={() => onRemover(produto)}>X</button>
+        <Button variant="warning" size="sm" onClick={() => onRemover(produto)}>
+          X
+        </Button>
       </div>
     </li>
   );

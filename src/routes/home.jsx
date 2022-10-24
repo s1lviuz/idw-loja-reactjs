@@ -27,7 +27,7 @@ export default function Home() {
   const { onComprar } = useContext(LojaContext);
 
   return (
-    <div className="lista">
+    <div>
       <h1>Produtos</h1>
       <ListaDeProdutos produtos={dados} onComprar={onComprar}></ListaDeProdutos>
     </div>

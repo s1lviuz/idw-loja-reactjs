@@ -1,9 +1,10 @@
 import { useContext } from "react";
+import { Button } from "react-bootstrap";
+import ReactMarkdown from "react-markdown";
 import { useLoaderData, useRouteError } from "react-router-dom";
-import { strapiDataToObject } from "../lib/funcoes";
+import gfm from "remark-gfm";
+import formatarPreco, { strapiDataToObject } from "../lib/funcoes";
 import { LojaContext } from "../providers/AppContextProvider";
-import formatarPreco from "../lib/funcoes";
-import './produto.css';
 
 export async function loader({ params }) {
   try {
@@ -28,22 +29,38 @@ export default function Produto() {
   const { onComprar } = useContext(LojaContext);
 
   return (
-    <div className="produto">
-      <h1>{dados.nome}</h1>
-      <div className="informacoes">
-        <div className="foto">
-          <img
-            src={`http://localhost:1337${dados.foto?.formats?.thumbnail?.url}`}
-            width={200}
-            alt={dados.nome}
-          ></img>
+    <div>
+      <div className="row me-2 mt-4">
+        <div className="col-md-9">
+          <div className="card p-3  border-0">
+            <div className="row">
+              <div className="col-md-3">
+                <img
+                  src={`http://localhost:1337${dados.foto?.formats?.thumbnail?.url}`}
+                  className="img-fluid"
+                  alt={dados.nome}
+                ></img>
+              </div>
+              <div className="col-md-9">
+                <h1 className="fs-3">{dados.nome}</h1>
+                <div className="my-4">
+                  <ReactMarkdown remarkPlugins={[gfm]}>
+                    {dados.descricao}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="descricao">
-          {dados.descricao}
-        </div>
-        <div className="compra">
-          <div className="preco">{formatarPreco(dados.preco)}</div>
-          <button onClick={() => onComprar(dados)}>Comprar</button>
+        <div className="col-md-3">
+          <div className="card border-0">
+            <div className="card-body">
+              <div className="fs-2 mb-3">{formatarPreco(dados.preco)}</div>
+              <Button onClick={() => onComprar(dados)} className="w-100">
+                Comprar
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
