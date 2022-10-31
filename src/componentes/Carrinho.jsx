@@ -1,10 +1,8 @@
-import { useContext } from "react";
-import formatarPreco from "../lib/funcoes";
-import { LojaContext } from "../providers/AppContextProvider";
-import Alerta from "./Alerta";
 import { Button } from "react-bootstrap";
+import formatarPreco from "../lib/funcoes";
+import { useLojaContext } from "../providers/AppProvider";
+import Alerta from "./Alerta";
 import "./Carrinho.scss";
-
 /**
  * O componente ItemDoCarrinho representa um item
  * da lista de produtos do Carrinho.
@@ -36,7 +34,7 @@ function ItemDoCarrinho({ produto, onRemover }) {
  */
 export default function Carrinho() {
   // utiliza o hook useContext para obter os valores do LojaContext
-  const { produtosDoCarrinho, onRemover } = useContext(LojaContext);
+  const { produtosDoCarrinho, onRemover } = useLojaContext();
 
   /**
    * Esta função calcula o total do carrinho com base

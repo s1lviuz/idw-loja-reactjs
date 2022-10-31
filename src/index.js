@@ -2,11 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
+import Contas from './layouts/contas';
+import Vitrine from './layouts/vitrine';
+import AppProvider from './providers/AppProvider';
+import { AuthProvider } from './providers/AuthProvider';
 import reportWebVitals from './reportWebVitals';
+import Cadastrar from './routes/contas/cadastrar';
+import Entrar from './routes/contas/entrar';
 import Home, { loader as homeLoader, ServidorIndisponivel } from './routes/home';
+import Perfil, { loader as perfilLoader } from './routes/perfil';
 import Produto, { loader as produtoLoader, ProdutoNaoEncontrado } from './routes/produto';
-import AppContextProvider from './providers/AppContextProvider';
-
+import RecuperarAcesso from './routes/contas/recuperar-acesso';
 
 const router = createBrowserRouter([
   {
@@ -14,16 +20,45 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: 'produtos/:idProduto',
-        loader: produtoLoader,
-        errorElement: <ProdutoNaoEncontrado />,
-        element: <Produto />
+        path: 'contas',
+        element: <Contas />,
+        children: [
+          {
+            path: 'entrar',
+            element: <Entrar />
+          },
+          {
+            path: 'cadastrar',
+            element: <Cadastrar />
+          },
+          {
+            path: 'recuperar-acesso',
+            element: <RecuperarAcesso />
+          },
+        ],
       },
       {
         path: '',
-        loader: homeLoader,
-        element: <Home />,
-        errorElement: <ServidorIndisponivel />,
+        element: <Vitrine />,
+        children: [
+          {
+            path: 'perfil',
+            element: <Perfil />,
+            loader: perfilLoader,
+          },
+          {
+            path: 'produtos/:idProduto',
+            loader: produtoLoader,
+            errorElement: <ProdutoNaoEncontrado />,
+            element: <Produto />
+          },
+          {
+            path: '',
+            loader: homeLoader,
+            element: <Home />,
+            errorElement: <ServidorIndisponivel />,
+          }
+        ]
       }
     ]
   }
@@ -32,9 +67,11 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AppContextProvider>
-      <RouterProvider router={router} />
-    </AppContextProvider>
+    <AuthProvider>
+      <AppProvider>
+        <RouterProvider router={router} />
+      </AppProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
 

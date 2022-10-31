@@ -1,32 +1,48 @@
-import { useContext } from "react";
-import { Button } from "react-bootstrap";
+import * as dayjs from "dayjs";
+import "dayjs/locale/pt-br";
+import { useState } from "react";
+import { Button, Spinner } from "react-bootstrap";
+import Toast from "react-bootstrap/Toast";
+import ToastContainer from "react-bootstrap/ToastContainer";
 import ReactMarkdown from "react-markdown";
 import { useLoaderData, useRouteError } from "react-router-dom";
 import gfm from "remark-gfm";
-import formatarPreco, { strapiDataToObject } from "../lib/funcoes";
-import { LojaContext } from "../providers/AppContextProvider";
+import { Favoritos } from "../lib/Favoritos";
+import formatarPreco from "../lib/funcoes";
+import { Produtos } from "../lib/Produtos";
+import { useLojaContext } from "../providers/AppProvider";
+import { useAuthContext } from "../providers/AuthProvider";
 
 export async function loader({ params }) {
+  const dados = await Produtos.findOne(params.idProduto);
+  let favorito = null;
   try {
-    const response = await fetch(
-      `http://localhost:1337/api/produtos/${params.idProduto}/?populate=foto`
-    );
-    const json = await response.json();
-    if (json.data) {
-      const dados = strapiDataToObject(json.data);
-      return { dados };
+    const { favoritos } = await Favoritos.findByProduto(params.idProduto);
+    if (favoritos.length != 0) {
+      favorito = favoritos[0];
     }
-    if (json.error) {
-      throw json.error;
-    }
-  } catch (error) {
-    throw error;
-  }
+  } catch (error) {}
+  return { dados, favorito };
 }
 
 export default function Produto() {
-  const { dados } = useLoaderData();
-  const { onComprar } = useContext(LojaContext);
+  const { dados, favorito } = useLoaderData();
+  const { user } = useAuthContext();
+  const { onComprar } = useLojaContext();
+  const [loading, setLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [novoFavorito, setNovoFavorito] = useState();
+
+  const handleCurtirClick = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const favorito = await Favoritos.create(dados.id);
+    setNovoFavorito(favorito);
+    toggleToast();
+    setLoading(false);
+  };
+
+  const toggleToast = () => setShowToast(!showToast);
 
   return (
     <div>
@@ -43,6 +59,29 @@ export default function Produto() {
               </div>
               <div className="col-md-9">
                 <h1 className="fs-3">{dados.nome}</h1>
+                {favorito && (
+                  <div className="small text-muted">
+                    ❤ Você favoritou este produto em{" "}
+                    {dayjs(favorito.createdAt).format("L LT")}
+                  </div>
+                )}
+                {novoFavorito && (
+                  <div className="small text-muted">
+                    ❤ Você favoritou este produto em{" "}
+                    {dayjs(novoFavorito.createdAt).format("L LT")}
+                  </div>
+                )}
+                {user != null && favorito == null && novoFavorito == null && (
+                  <Button
+                    onClick={handleCurtirClick}
+                    variant="outline-light"
+                    className="text-dark"
+                    disabled={loading}
+                  >
+                    {loading && <Spinner size="sm"></Spinner>}
+                    {!loading && <span>❤</span>} Adicionar aos favoritos
+                  </Button>
+                )}
                 <div className="my-4">
                   <ReactMarkdown remarkPlugins={[gfm]}>
                     {dados.descricao}
@@ -63,6 +102,18 @@ export default function Produto() {
           </div>
         </div>
       </div>
+      <ToastContainer className="p-3" position="bottom-end">
+        <Toast show={showToast} bg="success" onClose={toggleToast}>
+          <Toast.Header>
+            <span>❤</span>
+            <strong className="me-auto">Favoritos</strong>
+            <small>agora mesmo</small>
+          </Toast.Header>
+          <Toast.Body className="text-white">
+            Você adicionou o produto aos favoritos.
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </div>
   );
 }

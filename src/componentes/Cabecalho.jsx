@@ -4,7 +4,7 @@ export default function Cabecalho() {
   return (
     <header className="cabecalho">
       <div className="marca">
-        <Link to={""}>Loja PMW</Link>
+        <Link to={"/"}>Loja PMW</Link>
       </div>
     </header>
   );

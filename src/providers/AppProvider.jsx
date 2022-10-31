@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Define o context
 export const LojaContext = createContext();
@@ -9,7 +9,7 @@ export const LojaContext = createContext();
  * @param {{children}} Props
  * @returns
  */
-const AppContextProvider = ({ children }) => {
+const AppProvider = ({ children }) => {
   // obtém o valor do localStorage
   const carrinho = JSON.parse(localStorage.getItem("carrinho") || "[]");
 
@@ -25,7 +25,7 @@ const AppContextProvider = ({ children }) => {
 
   const handleAbrirCarrinho = () => {
     setShowCarrinho(true);
-  }
+  };
 
   const onComprar = (produto) => {
     // procura o produto no carrinho
@@ -80,7 +80,7 @@ const AppContextProvider = ({ children }) => {
   }, [produtosDoCarrinho]);
 
   // Define o valor do LojaContext
-  const values = {
+  const value = {
     produtosDoCarrinho,
     setProdutosDoCarrinho,
     onComprar,
@@ -91,7 +91,11 @@ const AppContextProvider = ({ children }) => {
     handleAbrirCarrinho,
   };
 
-  return <LojaContext.Provider value={values}>{children}</LojaContext.Provider>;
+  return <LojaContext.Provider value={value}>{children}</LojaContext.Provider>;
 };
 
-export default AppContextProvider;
+export default AppProvider;
+
+export function useLojaContext() {
+  return useContext(LojaContext);
+}

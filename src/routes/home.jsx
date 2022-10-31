@@ -1,30 +1,16 @@
-import { useContext } from "react";
 import { useLoaderData, useRouteError } from "react-router-dom";
 import ListaDeProdutos from "../componentes/ListaDeProdutos";
-import { strapiDataToObject } from "../lib/funcoes";
-import { LojaContext } from "../providers/AppContextProvider";
+import { Produtos } from "../lib/Produtos";
+import { useLojaContext } from "../providers/AppProvider";
 
 export async function loader() {
-  try {
-    const response = await fetch(
-      "http://localhost:1337/api/produtos/?populate=foto"
-    );
-    const json = await response.json();
-    if (json.data) {
-      const dados = strapiDataToObject(json.data);
-      return { dados };
-    }
-    if (json.error) {
-      throw json.error;
-    }
-  } catch (error) {
-    throw error;
-  }
+  const dados = await Produtos.find();
+  return { dados };
 }
 
 export default function Home() {
   const { dados } = useLoaderData();
-  const { onComprar } = useContext(LojaContext);
+  const { onComprar } = useLojaContext();
 
   return (
     <div>
@@ -44,7 +30,7 @@ export function ServidorIndisponivel() {
         novamente dentro de instantes.
       </p>
       <p>
-      <i>{error.statusText || error.message}</i>
+        <i>{error.statusText || error.message}</i>
       </p>
     </div>
   );
