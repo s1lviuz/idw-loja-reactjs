@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Card, FloatingLabel, Form } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../providers/AuthProvider";
 
 /**
@@ -18,6 +18,8 @@ export default function Cadastrar() {
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState();
   const [modalBody, setModalBody] = useState();
+  const [cadastroOk, setCadastroOk] = useState(false);
+  const navigate = useNavigate();
 
   // Obtém o método signUp do AuthContext
   const { signUp } = useAuthContext();
@@ -30,7 +32,12 @@ export default function Cadastrar() {
   /**
    * Define um tratador de evento para ocultar a modal
    */
-  const handleCloseModal = () => setShowModal(false);
+  const handleCloseModal = () => {
+    if (cadastroOk) {
+      navigate("/perfil");
+    }
+    setShowModal(false);
+  };
 
   /**
    * Define um tratador de evento utilizado no submit do formulário.
@@ -51,6 +58,7 @@ export default function Cadastrar() {
       setModalBody(
         "Sua conta de usuário foi criada. Ao continuar, você terá acesso a sua área de usuário."
       );
+      setCadastroOk(true);
     } catch (erro) {
       setModalTitle("Não foi possível criar sua conta de usuário");
       setModalBody(erro);

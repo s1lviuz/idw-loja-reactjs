@@ -66,13 +66,13 @@ export function AuthProvider({ children }) {
         body: JSON.stringify({ username, email, password }),
       });
       const json = await response.json();
-      if (!json.data) {
+      if (json.error) {
         throw json.error;
       } else {
-        auth.setToken(json.data.jwt);
-        auth.setUserInfo(json.data.user);
-        setUser(json.data.user);
-        return json.data;
+        auth.setToken(json.jwt);
+        auth.setUserInfo(json.user);
+        setUser(json.user);
+        return json;
       }
     } catch (error) {
       throw MAPEADOR_DE_MENSAGENS[error.message];
