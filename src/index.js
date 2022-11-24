@@ -11,6 +11,8 @@ import Cadastrar from './routes/contas/cadastrar';
 import Entrar from './routes/contas/entrar';
 import Home, { loader as homeLoader, ServidorIndisponivel } from './routes/home';
 import Perfil, { loader as perfilLoader } from './routes/perfil';
+import Pedidos, { loader as pedidosLoader } from './routes/pedidos/pedidos';
+import Pedido, { loader as pedidoLoader } from './routes/pedidos/pedido';
 import Produto, { loader as produtoLoader, ProdutoNaoEncontrado } from './routes/produto';
 import RecuperarAcesso from './routes/contas/recuperar-acesso';
 
@@ -47,6 +49,16 @@ const router = createBrowserRouter([
             loader: perfilLoader,
           },
           {
+            path: 'pedidos',
+            element: <Pedidos />,
+            loader: pedidosLoader,
+          },
+          {
+            path: 'pedidos/:idPedido',
+            element: <Pedido />,
+            loader: pedidoLoader,
+          },
+          {
             path: 'produtos/:idProduto',
             loader: produtoLoader,
             errorElement: <ProdutoNaoEncontrado />,
@@ -65,6 +77,7 @@ const router = createBrowserRouter([
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
     <AuthProvider>

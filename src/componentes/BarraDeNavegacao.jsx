@@ -48,6 +48,10 @@ export default function BarraDeNavegacao() {
                   Perfil
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
+                <NavDropdown.Item as={Link} to="/pedidos">
+                  Pedidos
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleSairClick}>
                   Sair
                 </NavDropdown.Item>

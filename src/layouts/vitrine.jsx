@@ -26,12 +26,6 @@ export default function Vitrine({ children }) {
     <>
       <BarraDeNavegacao />
 
-      <Container className="my-5">
-        <main>
-          <Outlet />
-        </main>
-      </Container>
-
       <Offcanvas
         show={showCarrinho}
         onHide={handleFecharCarrinho}
@@ -45,7 +39,15 @@ export default function Vitrine({ children }) {
         </Offcanvas.Body>
       </Offcanvas>
 
-      <Rodape />
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "calc(100% - 56px)" }}>
+        <Container className="my-5">
+          <main>
+            <Outlet />
+          </main>
+        </Container>
+
+        <Rodape />
+      </div>
     </>
   );
 }
