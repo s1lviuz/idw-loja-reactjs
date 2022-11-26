@@ -18,7 +18,7 @@ export async function loader({ params }) {
     if (!user) {
         return redirect("/contas/entrar");
     }
-    const { pedido, meta } = await Pedidos.findOne(params.id);
+    const { pedido, meta } = await Pedidos.findOne(params.idPedido);
     return { pedido, meta };
 }
 
@@ -58,15 +58,14 @@ const DetalhesDoPedido = ({ data, total, produtos }) => {
 
 const Pedido = () => {
     const { pedido } = useLoaderData();
-    console.log(pedido)
 
     return (
         <>
-            <h2>Detalhes do Pedido</h2>
+            <h2>Detalhes do Pedido #{pedido.id}</h2>
             {pedido && <DetalhesDoPedido
-                data={pedido.attributes.createdAt}
-                total={pedido.attributes.valorTotal}
-                produtos={pedido.attributes.items.data}
+                data={pedido.createdAt}
+                total={pedido.valorTotal}
+                produtos={pedido.itens}
             />}
         </>
     )

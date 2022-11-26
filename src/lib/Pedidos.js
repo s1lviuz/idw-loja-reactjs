@@ -2,7 +2,6 @@ import * as qs from "qs";
 import { BEARER } from "../constants";
 import api from "../lib/axios";
 import auth from "./auth";
-import { strapiDataToObject } from "./funcoes";
 
 /**
  * Define um Singleton com métodos para acessar o endpoint Pedidos do backend.
@@ -18,6 +17,9 @@ export const Pedidos = {
         params: {
           user: {
             id: user.id,
+          },
+          sort: {
+            id: 'desc'
           }
         },
         headers: {
@@ -42,26 +44,25 @@ export const Pedidos = {
  * @returns 
  */
   async findOne(id) {
-    const user = auth.getUserInfo();
     try {
-      const response = await api.get('pedidos', {
-        params: {
-          populate: [
-            'items',
-            'items.produto',
-            'items.produto.foto'
-          ],
-          user: {
-            id: user.id,
-          },
-          id: id
-        },
+      const query = qs.stringify({
+        populate: [
+          'items',
+          'items.produto'
+        ]
+      })
+      const response = await api.get(`pedidos/${id}/?${query}`, {
         headers: {
           Authorization: `${BEARER} ${auth.getToken()}`
         }
       })
       if (response.data) {
-        const pedido = response.data.data[0];
+        const pedido = {
+          id: response.data.data.id,
+          itens: response.data.data.attributes.items.data,
+          createdAt: response.data.data.attributes.createdAt,
+          valorTotal: response.data.data.attributes.valorTotal
+        }
         return { pedido, meta: response.meta };
       }
       if (response.error) {
@@ -70,72 +71,38 @@ export const Pedidos = {
     } catch (error) {
       throw error;
     }
+  },
+  /**
+   * Cria um registro de pedido para o usuário da sessão e para os itens do pedido
+   * identificado por `itensDoPedido`.
+   * 
+   * @param {Array<Number>} itensDoPedido Os identificadores e quantidade dos itens do pedido
+   * @param {Number} valorTotal O valor total do pedido
+   * @returns 
+   */
+  async create(itensDoPedido, valorTotal) {
+    const user = auth.getUserInfo();
+    try {
+      const response = await api.post('pedidos', {
+        data: {
+          user: user.id,
+          items: itensDoPedido,
+          valorTotal: valorTotal
+        }
+      }, {
+        headers: {
+          'Authorization': `${BEARER} ${auth.getToken()}`
+        }
+      });
+      if (response.data) {
+        const pedido = response;
+        return pedido;
+      }
+      if (response.error) {
+        throw response.error;
+      }
+    } catch (error) {
+      throw error;
+    }
   }
-  // /**
-  //  * Obtém a lista dos favoritos para o usuário da sessão e para o produto
-  //  * identificado por `pedidoId`.
-  //  * 
-  //  * @param {Number} pedidoId O identificador do produto
-  //  * @returns A lista de favoritos
-  //  */
-  // async findByProduto(pedidoId) {
-  //   return Favoritos.find(pedidoId);
-  // },
-  // /**
-  //    * Exclui um pedido.
-  //    * @param {Number} id O identificador do pedido
-  //    */
-  // async delete(id) {
-  //   try {
-  //     const response = await fetch(`${API}/pedidos/${id}`, {
-  //       method: 'DELETE',
-  //       headers: {
-  //         Authorization: `${BEARER} ${auth.getToken()}`
-  //       }
-  //     });
-  //     const json = await response.json();
-  //     if (json.error) {
-  //       throw json.error;
-  //     }
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // },
-  // /**
-  //  * Cria um registro de pedido para o usuário da sessão e para os itens do pedido
-  //  * identificado por `itensDoPedido`.
-  //  * 
-  //  * @param {Object} itensDoPedido O identificador do produto
-  //  * @returns 
-  //  */
-  // async create(itensDoPedido) {
-  //   const user = auth.getUserInfo();
-  //   try {
-  //     const response = await fetch(`${API}/pedidos`, {
-  //       method: 'POST',
-  //       headers: {
-  //         Authorization: `${BEARER} ${auth.getToken()}`,
-  //         "Content-type": "application/json",
-  //       },
-  //       body: JSON.stringify(
-  //         {
-  //           data: {
-  //             user: user.id,
-  //             itens_do_pedido: itensDoPedido,
-  //           }
-  //         }
-  //       )
-  //     });
-  //     const json = await response.json();
-  //     if (json.data) {
-  //       const favorito = strapiDataToObject(json.data);
-  //       return favorito;
-  //     }
-  //     if (json.error) {
-  //       throw json.error;
-  //     }
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
 }

@@ -1,6 +1,11 @@
-import { Button } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Spinner } from "react-bootstrap";
 import formatarPreco from "../lib/funcoes";
+import { Pedidos } from "../lib/Pedidos";
+import { ItemDoPedido } from "../lib/ItemDoPedido";
 import { useLojaContext } from "../providers/AppProvider";
+import { useNavigate } from "react-router-dom";
+import auth from "../lib/auth";
 import Alerta from "./Alerta";
 import "./Carrinho.scss";
 /**
@@ -34,7 +39,16 @@ function ItemDoCarrinho({ produto, onRemover }) {
  */
 export default function Carrinho() {
   // utiliza o hook useContext para obter os valores do LojaContext
-  const { produtosDoCarrinho, onRemover } = useLojaContext();
+  const { produtosDoCarrinho, setProdutosDoCarrinho, onRemover, setShowCarrinho } = useLojaContext();
+
+  // estado que controla o spinner em finalizar o pedido
+  const [carregando, setCarregando] = useState(false);
+
+  // hook do React Router para redirecionar navegação
+  const navigate = useNavigate()
+
+  // carrega as informações do usuário da sessão
+  const user = auth.getUserInfo();
 
   /**
    * Esta função calcula o total do carrinho com base
@@ -52,6 +66,34 @@ export default function Carrinho() {
     return total;
   };
 
+  const finalizarPedido = async () => {
+    setCarregando(!carregando)
+    try {
+      let itensIds = []
+      produtosDoCarrinho.forEach(async (produto, idx) => {
+        const response = await ItemDoPedido.create(produto.id, produto.quantidadeNoCarrinho)
+        itensIds.push(response.data.id)
+        if (idx + 1 === produtosDoCarrinho.length) {
+          try {
+            const _response = await Pedidos.create(itensIds, calcularTotal())
+            if (_response.status === 200) {
+              setProdutosDoCarrinho([])
+              setShowCarrinho(false)
+              navigate("/pedidos")
+            }
+          }
+          catch (error) {
+            throw error
+          }
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setCarregando(!carregando)
+    }
+  }
+
   return (
     <div className="carrinho">
       <h1>Seu carrinho</h1>
@@ -66,16 +108,27 @@ export default function Carrinho() {
           ))}
         {(!produtosDoCarrinho ||
           (produtosDoCarrinho && produtosDoCarrinho.length === 0)) && (
-          <Alerta
-            titulo={"Seu carrinho está vazio"}
-            mensagem={"Que tal mudar essa situação? 😉"}
-          ></Alerta>
-        )}
+            <Alerta
+              titulo={"Seu carrinho está vazio"}
+              mensagem={"Que tal mudar essa situação? 😉"}
+            ></Alerta>
+          )}
       </ul>
       <div id="carrinho-total">
         <div>Total</div>
         <div>{formatarPreco(calcularTotal())}</div>
       </div>
+      {!carregando && produtosDoCarrinho.length > 0 && user && <Button style={{ marginTop: "15px" }} variant="success" onClick={finalizarPedido} >
+        Finalizar Pedido
+      </Button>}
+      {carregando && <Button style={{ marginTop: "15px" }} variant="success" disabled>
+        <Spinner
+          animation="border"
+          size="sm"
+          role="status"
+          aria-hidden="true"
+        />
+      </Button>}
     </div>
   );
 }
