@@ -19,7 +19,11 @@ export async function loader({ params }) {
         return redirect("/contas/entrar");
     }
     const { pedido, meta } = await Pedidos.findOne(params.idPedido);
-    return { pedido, meta };
+    if (pedido.userId !== user.id) {
+        throw new Response("Not Found", { status: 404 });
+    } else {
+        return { pedido, meta };
+    }
 }
 
 const DetalhesDoPedido = ({ data, total, produtos }) => {

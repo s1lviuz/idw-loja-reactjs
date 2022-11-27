@@ -118,7 +118,7 @@ export default function Carrinho() {
         <div>Total</div>
         <div>{formatarPreco(calcularTotal())}</div>
       </div>
-      {!carregando && produtosDoCarrinho.length > 0 && user && <Button className="button-carrinho" variant="success" onClick={finalizarPedido} >
+      {!carregando && produtosDoCarrinho.length > 0 && user && <Button className="button-carrinho" variant="success" onClick={finalizarPedido}>
         Finalizar Pedido
       </Button>}
       {carregando && <Button className="button-carrinho" variant="success" disabled>
@@ -129,7 +129,7 @@ export default function Carrinho() {
           aria-hidden="true"
         />
       </Button>}
-      {!user && <Card>
+      {!user && produtosDoCarrinho.length > 0 && <Card className="mt-3">
         <Alerta
           titulo="Entre para finalizar seu pedido"
           mensagem="Você pode fazer isso por aqui 😉"

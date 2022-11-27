@@ -47,6 +47,7 @@ export const Pedidos = {
     try {
       const query = qs.stringify({
         populate: [
+          'user',
           'items',
           'items.produto'
         ]
@@ -59,6 +60,7 @@ export const Pedidos = {
       if (response.data) {
         const pedido = {
           id: response.data.data.id,
+          userId: response.data.data.attributes.user.data.id,
           itens: response.data.data.attributes.items.data,
           createdAt: response.data.data.attributes.createdAt,
           valorTotal: response.data.data.attributes.valorTotal
