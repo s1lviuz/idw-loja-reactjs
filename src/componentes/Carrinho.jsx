@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Button, Spinner } from "react-bootstrap";
+import { Button, Card, Spinner } from "react-bootstrap";
 import formatarPreco from "../lib/funcoes";
 import { Pedidos } from "../lib/Pedidos";
 import { ItemDoPedido } from "../lib/ItemDoPedido";
 import { useLojaContext } from "../providers/AppProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import auth from "../lib/auth";
 import Alerta from "./Alerta";
 import "./Carrinho.scss";
@@ -118,10 +118,10 @@ export default function Carrinho() {
         <div>Total</div>
         <div>{formatarPreco(calcularTotal())}</div>
       </div>
-      {!carregando && produtosDoCarrinho.length > 0 && user && <Button style={{ marginTop: "15px" }} variant="success" onClick={finalizarPedido} >
+      {!carregando && produtosDoCarrinho.length > 0 && user && <Button className="button-carrinho" variant="success" onClick={finalizarPedido} >
         Finalizar Pedido
       </Button>}
-      {carregando && <Button style={{ marginTop: "15px" }} variant="success" disabled>
+      {carregando && <Button className="button-carrinho" variant="success" disabled>
         <Spinner
           animation="border"
           size="sm"
@@ -129,6 +129,13 @@ export default function Carrinho() {
           aria-hidden="true"
         />
       </Button>}
+      {!user && <Card>
+        <Alerta
+          titulo="Entre para finalizar seu pedido"
+          mensagem="Você pode fazer isso por aqui 😉"
+        />
+        <Button variant="success" as={Link} to={"contas/entrar"}>Entrar</Button>
+      </Card>}
     </div>
   );
 }

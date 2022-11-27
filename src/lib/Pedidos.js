@@ -15,8 +15,8 @@ export const Pedidos = {
     try {
       const response = await api.get('pedidos', {
         params: {
-          user: {
-            id: user.id,
+          filters: {
+            user: user.id
           },
           sort: {
             id: 'desc'

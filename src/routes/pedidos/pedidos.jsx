@@ -6,8 +6,10 @@ import formatarPreco from "../../lib/funcoes";
 import auth from "../../lib/auth";
 import { Link, redirect, useLoaderData } from "react-router-dom";
 import { Pedidos } from "../../lib/Pedidos"
-
-import Button from "react-bootstrap/Button";
+import { Button } from "react-bootstrap";
+import { Card } from "react-bootstrap";
+import Alerta from "../../componentes/Alerta";
+import * as Component from '../../lib/styledComponents/Pedidos';
 
 dayjs.locale("pt-br");
 dayjs.extend(relativeTime);
@@ -24,16 +26,18 @@ export async function loader() {
 
 const Pedido = ({ id, data, total }) => {
     return (
-        <div style={{ background: "white", border: "1px solid black", borderRadius: "20px", padding: "1.5%", marginTop: "15px" }}>
-            <h3>Pedido #{id}</h3>
-            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
-                    <div>Data: <i>{dayjs(data).format("L LT")}</i></div>
-                    <div>Total: {formatarPreco(total)}</div>
-                </div>
-                <Button as={Link} to={`${id}`} variant="outline-secondary" className="me-3">Abrir</Button>
-            </div>
-        </div>
+        <Card>
+            <Card.Body>
+                <Card.Title>Pedido #{id}</Card.Title>
+                <Component.InfoPedido>
+                    <Card.Text>Data: <i>{dayjs(data).format("L LT")}</i></Card.Text>
+                    <Card.Text>Total: {formatarPreco(total)}</Card.Text>
+                </Component.InfoPedido>
+                <Component.LinkPedido>
+                    <Button as={Link} to={id.toString()} variant="outline-secondary" >Abrir</Button>
+                </Component.LinkPedido>
+            </Card.Body>
+        </Card>
     )
 }
 
@@ -42,8 +46,8 @@ const MeusPedidos = () => {
 
     return (
         <>
-            <h1>Meus Pedidos</h1>
-            {pedidos && <div>
+            {pedidos && <Component.Container>
+                <Component.Title>Meus Pedidos</Component.Title>
                 {pedidos.map((pedido) => (
                     <Pedido
                         key={pedido.id}
@@ -52,7 +56,15 @@ const MeusPedidos = () => {
                         total={pedido.attributes.valorTotal}
                     />
                 ))}
-            </div>}
+            </Component.Container>}
+            {(!pedidos || pedidos.length === 0) && <Card>
+                <Card.Body>
+                    <Alerta
+                        titulo={"Você ainda não fez nenhum pedido"}
+                        mensagem={"Que tal mudar essa situação? 😉"}
+                    />
+                </Card.Body>
+            </Card>}
         </>
     )
 }

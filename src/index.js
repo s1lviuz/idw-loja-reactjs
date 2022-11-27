@@ -12,7 +12,7 @@ import Entrar from './routes/contas/entrar';
 import Home, { loader as homeLoader, ServidorIndisponivel } from './routes/home';
 import Perfil, { loader as perfilLoader } from './routes/perfil';
 import Pedidos, { loader as pedidosLoader } from './routes/pedidos/pedidos';
-import Pedido, { loader as pedidoLoader } from './routes/pedidos/pedido';
+import DetalhesDoPedido, { loader as pedidoLoader, PedidoNaoEncontrado } from './routes/pedidos/detalhesDoPedido';
 import Produto, { loader as produtoLoader, ProdutoNaoEncontrado } from './routes/produto';
 import RecuperarAcesso from './routes/contas/recuperar-acesso';
 
@@ -55,8 +55,9 @@ const router = createBrowserRouter([
           },
           {
             path: 'pedidos/:idPedido',
-            element: <Pedido />,
+            element: <DetalhesDoPedido />,
             loader: pedidoLoader,
+            errorElement: <PedidoNaoEncontrado/>,
           },
           {
             path: 'produtos/:idProduto',
